@@ -4,6 +4,7 @@ import { Grass } from "../blocks/Grass";
 import { Machine } from "../blocks/machines/Machine";
 import { Ore } from "../blocks/Ore";
 import { Wall } from "../blocks/Wall";
+import { Workspace } from "../workspace";
 
 export class Chunk {
   readonly width = 16;
@@ -18,7 +19,7 @@ export class Chunk {
   readonly worldPosition: Phaser.Geom.Point;
 
   constructor(
-    readonly scene: Phaser.Scene,
+    readonly workspace: Workspace,
     readonly x: number,
     readonly y: number,
   ) {
@@ -33,6 +34,10 @@ export class Chunk {
       this.x * this.width,
       this.y * this.height,
     );
+  }
+
+  getScene() {
+    return this.workspace.scene;
   }
 
   load() {

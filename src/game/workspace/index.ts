@@ -1,17 +1,18 @@
 import { Conveyor } from "../blocks/machines/Conveyor";
-import { PlayerCameraHandler } from "../camera";
 import { Chunk } from "../chunk";
+import { Player } from "../player/Player";
+import { GameScene } from "../scene";
 
 export class Workspace {
   readonly chunks: Chunk[];
-  readonly camera: PlayerCameraHandler;
+  readonly player: Player;
 
   constructor(
-    readonly scene: Phaser.Scene,
+    readonly scene: GameScene,
   ) {
     this.chunks = [];
 
-    this.chunks.push(new Chunk(scene, 0, 0));
+    this.chunks.push(new Chunk(this, 0, 0));
 
     for (const chunk of this.chunks) {
       chunk.load();
@@ -19,10 +20,10 @@ export class Workspace {
       new Conveyor(chunk, 0, 4, 1, 'conveyor-0');
     }
 
-    this.camera = new PlayerCameraHandler(scene);
+    this.player = new Player(this);
   }
 
   update(_time: number, _delta: number): void {
-    this.camera.update();
+    this.player.update();
   }
 }

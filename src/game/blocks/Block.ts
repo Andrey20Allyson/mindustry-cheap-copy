@@ -10,6 +10,7 @@ export enum BlockType {
 
 export class Block {
   static BLOCK_BASE_SIZE = 32;
+  static TAG = 'blocks:block';
   sprite: Phaser.GameObjects.Sprite;
   readonly type: BlockType = BlockType.FLOOR;
 
@@ -27,7 +28,7 @@ export class Block {
       y + chunk.worldPosition.y,
     );
 
-    this.sprite = chunk.scene.add.sprite(
+    this.sprite = chunk.getScene().add.sprite(
       this.worldPosition.x * Block.BLOCK_BASE_SIZE,
       this.worldPosition.y * Block.BLOCK_BASE_SIZE,
       texture,
@@ -46,5 +47,17 @@ export class Block {
 
   destroy() {
     this.sprite.destroy();
+  }
+
+  update() { }
+
+  static pixelsToBlockPos(worldX: number, worldY: number): Phaser.Geom.Point {
+    const blockSize = Block.BLOCK_BASE_SIZE
+    const blockHalfSize = blockSize / 2;
+
+    const x = Math.floor((worldX + blockHalfSize) / blockSize);
+    const y = Math.floor((worldY + blockHalfSize) / blockSize);
+
+    return new Phaser.Geom.Point(x, y);
   }
 }
