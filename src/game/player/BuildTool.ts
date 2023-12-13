@@ -1,15 +1,24 @@
-import { Conveyor } from "../blocks/machines/Conveyor";
+import { Block } from "../blocks/Block";
 import { Machine } from "../blocks/machines/Machine";
+import { Player } from "./Player";
+
+export interface BlockFactory<B extends Block> {
+  create(x: number, y: number): B;
+}
 
 export class BuildTool {
-  Selected: typeof Machine;
+  blockFactory: BlockFactory<Machine> | null;
   speed: number = 1;
 
-  constructor() {
-    this.Selected = Conveyor;
+  constructor(
+    readonly player: Player,
+  ) {
+    this.blockFactory = null;
   }
 
-  build(x: number, y: number): void {
+  build(x: number, y: number): Machine | null {
+    if (this.blockFactory === null) return null;
     
+    return this.blockFactory.create(x, y);
   }
 }

@@ -23,6 +23,10 @@ export class Workspace {
     this.player = new Player(this);
   }
 
+  put() {
+    
+  }
+
   update(_time: number, _delta: number): void {
     this.player.update();
   }

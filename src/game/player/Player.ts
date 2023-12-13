@@ -14,7 +14,7 @@ export class Player {
     readonly workspace: Workspace,
   ) {
     this.camera = new PlayerCameraHandler(this.workspace.scene);
-    this.buildTool = new BuildTool();
+    this.buildTool = new BuildTool(this);
 
     this.mouse = new Mouse(this.workspace);
 
