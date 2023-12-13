@@ -1,10 +1,11 @@
-import { Block, BlockType } from "../blocks/Block";
+import { BlockType, Block } from "../blocks/Block";
 import { Floor } from "../blocks/Floor";
 import { Grass } from "../blocks/Grass";
 import { Machine } from "../blocks/machines/Machine";
 import { Ore } from "../blocks/Ore";
 import { Wall } from "../blocks/Wall";
-import { Workspace } from "../workspace";
+import { services } from "..";
+import { Workspace } from "../services/Workspace";
 
 export class Chunk {
   readonly width = 16;
@@ -17,12 +18,13 @@ export class Chunk {
   blocksPerLayer: number;
 
   readonly worldPosition: Phaser.Geom.Point;
+  readonly workspace: Workspace;
 
   constructor(
-    readonly workspace: Workspace,
     readonly x: number,
     readonly y: number,
   ) {
+    this.workspace = services.get('workspace');
     this.blocksPerLayer = this.width * this.height;
 
     this.floors = new Array(this.blocksPerLayer);
@@ -36,14 +38,10 @@ export class Chunk {
     );
   }
 
-  getScene() {
-    return this.workspace.scene;
-  }
-
   load() {
     for (let y = 0; y < this.height; y++) {
       for (let x = 0; x < this.width; x++) {
-        new Grass(this, x, y);
+        new Grass(x, y);
       }
     }
   }

@@ -1,4 +1,8 @@
 import Phaser from "phaser";
+import { services } from "..";
+import { GameScene } from "./GameScene";
+import { ServiceLike } from "./lib/ServiceContainer";
+import { GameEvents } from "./GameEvents";
 
 type MyKeyCursor = {
   [K in keyof Phaser.Types.Input.Keyboard.CursorKeys]: number;
@@ -17,26 +21,34 @@ function createWASDCursorKeys(keyboard: Phaser.Input.Keyboard.KeyboardPlugin) {
   } satisfies MyKeyCursor) as Phaser.Types.Input.Keyboard.CursorKeys;
 }
 
-export class PlayerCameraHandler {
-  readonly cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
-
+export class PlayerCamera implements ServiceLike {
   private deltaZoom = 0;
   private minZoom = 1.5;
   private maxZomm = 2.5;
 
-  constructor(
-    readonly scene: Phaser.Scene,
-  ) {
+  scene!: GameScene;
+  cursorKeys!: Phaser.Types.Input.Keyboard.CursorKeys;
+
+  get camera() {
+    return this.scene.cameras.main;
+  }
+
+  init(): void {
+    this.scene = services.get('game-scene');
+
     const keyboard = this.scene.input.keyboard;
     if (!keyboard) throw new Error(`Keyboard has't initialized!`);
 
     this.cursorKeys = createWASDCursorKeys(keyboard);
     this.scene.input.on('wheel', this.handleWheel, this);
+
+    services
+      .get('game-events')
+      .update
+      .subscribe(this.update, this);
   }
 
-  get camera() {
-    return this.scene.cameras.main;
-  }
+  afterInit(): void { }
 
   update() {
     this.updatePosition();

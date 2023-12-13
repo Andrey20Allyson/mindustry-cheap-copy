@@ -1,5 +1,5 @@
-import { Block } from "../blocks/Block";
-import { Machine } from "../blocks/machines/Machine";
+import { Block } from "../../blocks/Block";
+import { Machine } from "../../blocks/machines/Machine";
 import { Player } from "./Player";
 
 export interface BlockFactory<B extends Block> {
@@ -7,18 +7,16 @@ export interface BlockFactory<B extends Block> {
 }
 
 export class BuildTool {
-  blockFactory: BlockFactory<Machine> | null;
+  blockFactory: BlockFactory<Machine> | null = null;
   speed: number = 1;
 
   constructor(
     readonly player: Player,
-  ) {
-    this.blockFactory = null;
-  }
+  ) { }
 
   build(x: number, y: number): Machine | null {
     if (this.blockFactory === null) return null;
-    
+
     return this.blockFactory.create(x, y);
   }
 }

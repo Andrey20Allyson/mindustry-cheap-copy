@@ -1,5 +1,7 @@
 import Phaser from "phaser";
-import { Workspace } from "../workspace";
+import { GameEvents } from "./GameEvents";
+import { services } from "..";
+import { ServiceLike } from "./lib/ServiceContainer";
 
 export interface LoadableSprite {
   path: string;
@@ -14,24 +16,34 @@ const spritesToLoad: LoadableSprite[] = [{
   name: 'conveyor-0',
 }];
 
-export class GameScene extends Phaser.Scene {
-  workspace!: Workspace;
+export class GameScene extends Phaser.Scene implements ServiceLike {
+  gameEvents!: GameEvents;
 
   constructor() {
     super({ key: "MyScene" });
   }
 
+  afterInit(): void { }
+
+  init(): void {
+    this.gameEvents = services.get('game-events');
+  }
+
   preload() {
+    console.log('did preload')
+
     for (const sprite of spritesToLoad) {
       this.load.image(sprite.name, sprite.path);
     }
   }
 
   create() {
-    this.workspace = new Workspace(this);
+    console.log('created');
+
+    services.initialize();
   }
 
   update(time: number, delta: number): void {
-    this.workspace.update(time, delta);
+    this.gameEvents.update.emit(time, delta);
   }
 }
