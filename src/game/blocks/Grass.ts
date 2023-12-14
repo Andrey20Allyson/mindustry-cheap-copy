@@ -1,7 +1,8 @@
+import { BlockPosition } from "./Block.position";
 import { Floor } from "./Floor";
 
 export class Grass extends Floor {
-  constructor(x: number, y: number) {
-    super(x, y, 1, 'grass-0');
+  constructor(position: BlockPosition) {
+    super(position, 1, 'grass-0');
   }
 }

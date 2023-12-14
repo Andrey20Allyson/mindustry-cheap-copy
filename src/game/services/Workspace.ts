@@ -1,28 +1,29 @@
-import { Block } from "../blocks/Block";
+import { BlockPosition } from "../blocks/Block.position";
 import { Conveyor } from "../blocks/machines/Conveyor";
-import { Chunk } from "../chunk";
+import { ChunkCoords } from "../chunk/coords";
+import { ChunkRouter } from "../chunk/router";
 import { ServiceLike } from "./lib/ServiceContainer";
 
 export class Workspace implements ServiceLike {
-  readonly chunks: Chunk[] = [];
+  chunkRouter!: ChunkRouter;
 
   afterInit(): void {
-    this.chunks.push(new Chunk(0, 0));
-
-    console.log('workspace afterInit')
-
     this.initChunks();
   }
 
-  init(): void { }
+  init(): void {
+    this.chunkRouter = new ChunkRouter();
+  }
 
   initChunks() {
-    console.log(new Block(0, 0, 1, 'nan'));
+    this.chunkRouter.create(new ChunkCoords(0, 0));
+    this.chunkRouter.create(new ChunkCoords(0, 1));
+    this.chunkRouter.create(new ChunkCoords(1, 0));
 
-    for (const chunk of this.chunks) {
+    for (const [_, chunk] of this.chunkRouter.chunks) {
       chunk.load();
-
-      new Conveyor(0, 4, 1, 'conveyor-0');
     }
+
+    new Conveyor(new BlockPosition(2, 5), 1, 'conveyor-0');
   }
 }

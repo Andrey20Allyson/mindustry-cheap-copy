@@ -1,3 +1,4 @@
+import { BlockPosition } from "../Block.position";
 import { Machine } from "./Machine";
 
 export enum DirectionValue {
@@ -38,8 +39,8 @@ export class Direction {
 export class Directionable extends Machine {
   direction: Direction;
 
-  constructor(x: number, y: number, size: number, texture: string) {
-    super(x, y, size, texture);
+  constructor(posiion: BlockPosition, size: number, texture: string) {
+    super(posiion, size, texture);
 
     this.direction = new Direction();
   }

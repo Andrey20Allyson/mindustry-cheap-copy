@@ -1,74 +1,72 @@
-import { BlockType, Block } from "../blocks/Block";
+import { services } from "..";
+import { Block, BlockType } from "../blocks/Block";
+import { BlockPositionInChunk } from "../blocks/Block.position";
 import { Floor } from "../blocks/Floor";
 import { Grass } from "../blocks/Grass";
-import { Machine } from "../blocks/machines/Machine";
 import { Ore } from "../blocks/Ore";
 import { Wall } from "../blocks/Wall";
-import { services } from "..";
-import { Workspace } from "../services/Workspace";
+import { Machine } from "../blocks/machines/Machine";
+import { ChunkCoords } from "./coords";
 
 export class Chunk {
-  readonly width = 16;
-  readonly height = 16;
-
   floors: Floor[];
   ores: Ore[];
   machines: Machine[];
   walls: Wall[];
   blocksPerLayer: number;
 
-  readonly worldPosition: Phaser.Geom.Point;
-  readonly workspace: Workspace;
+  readonly workspace = services.get('workspace');
 
   constructor(
-    readonly x: number,
-    readonly y: number,
+    readonly coords: ChunkCoords
   ) {
-    this.workspace = services.get('workspace');
-    this.blocksPerLayer = this.width * this.height;
+    this.blocksPerLayer = this.size ** 2;
 
     this.floors = new Array(this.blocksPerLayer);
     this.machines = new Array(this.blocksPerLayer);
     this.walls = new Array(this.blocksPerLayer);
     this.ores = new Array(this.blocksPerLayer);
+  }
 
-    this.worldPosition = new Phaser.Geom.Point(
-      this.x * this.width,
-      this.y * this.height,
-    );
+  get size() {
+    return this.workspace.chunkRouter.chunkSize;
   }
 
   load() {
-    for (let y = 0; y < this.height; y++) {
-      for (let x = 0; x < this.width; x++) {
-        new Grass(x, y);
+    for (let y = 0; y < this.size; y++) {
+      for (let x = 0; x < this.size; x++) {
+        const position = new BlockPositionInChunk(x, y, this.coords).toBlockPosition();
+
+        new Grass(position);
       }
     }
   }
 
-  insert(block: Block): this {
-    let collection: Block[];
-
-    switch (block.type) {
+  collectionOf(type: BlockType): Block[] {
+    switch (type) {
       case BlockType.FLOOR:
-        collection = this.floors;
-        break;
+        return this.floors;
       case BlockType.ORE:
-        collection = this.ores;
-        break;
+        return this.ores;
       case BlockType.MACHINE:
-        collection = this.machines;
-        break;
+        return this.machines;
       case BlockType.WALL:
-        collection = this.walls;
-        break;
+        return this.walls;
     }
-
-    collection[this.indexFromPosition(block.x, block.y)] = block;
-    return this;
   }
 
-  indexFromPosition(x: number, y: number) {
-    return y * this.width + x;
+  at(type: BlockType, position: BlockPositionInChunk): Block | undefined {
+    const collection = this.collectionOf(type);
+    const index = position.toIndex();
+
+    return collection[index];
+  }
+
+  put(block: Block): this {
+    const collection = this.collectionOf(block.type);
+    const index = block.position.toPositionInChunk().toIndex();
+
+    collection[index] = block;
+    return this;
   }
 }

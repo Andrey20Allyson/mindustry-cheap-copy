@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { services } from "..";
+import { BlockPosition } from "./Block.position";
 
 export enum BlockType {
   FLOOR = 'block-type.floor',
@@ -15,20 +16,21 @@ export class Block {
   readonly type: BlockType = BlockType.FLOOR;
   readonly scene = services.get('game-scene');
   readonly workspace = services.get('workspace');
-
+  
   constructor(
-    readonly x: number,
-    readonly y: number,
+    readonly position: BlockPosition,
     readonly size: number,
     readonly texture: string,
   ) {
     this.sprite = this.initSprite();
+
+    this.workspace.chunkRouter.put(this);
   }
   
   initSprite() {
     const sprite = this.scene.add.sprite(
-      this.x * Block.BLOCK_BASE_SIZE,
-      this.y * Block.BLOCK_BASE_SIZE,
+      this.position.x * Block.BLOCK_BASE_SIZE,
+      this.position.y * Block.BLOCK_BASE_SIZE,
       this.texture,
     );
   
@@ -49,15 +51,13 @@ export class Block {
 
   update() { }
 
-  static pixelsToBlockPos(worldX: number, worldY: number): Phaser.Geom.Point {
+  static pixelsToBlockPos(worldX: number, worldY: number): BlockPosition {
     const blockSize = Block.BLOCK_BASE_SIZE
     const blockHalfSize = blockSize / 2;
 
     const x = Math.floor((worldX + blockHalfSize) / blockSize);
     const y = Math.floor((worldY + blockHalfSize) / blockSize);
 
-    return new Phaser.Geom.Point(x, y);
+    return new BlockPosition(x, y);
   }
 }
-
-console.log('inicializou');

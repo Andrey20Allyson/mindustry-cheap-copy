@@ -10,10 +10,10 @@ export type ServiceConstructor<T = ServiceLike> = (new () => T) & {
 export class ServiceContainer<SD extends object> {
   private services = {} as Record<string, ServiceLike>;
 
-  create<K extends keyof SD & string>(name: K, Service: ServiceConstructor<SD[K]>): void {
+  create<K extends keyof SD & string>(name: K, Service: ServiceConstructor<SD[K] & ServiceLike>): void {
     const instance = new Service;
 
-    this.services[name] = instance as ServiceLike;
+    this.services[name] = instance;
   }
 
   initialize() {
@@ -28,7 +28,7 @@ export class ServiceContainer<SD extends object> {
 
   get<K extends keyof SD & string>(name: K): SD[K] {
     const service = this.services[name];
-    if (service === undefined) throw new Error(`Service ${name} ha`);
+    if (service === undefined) throw new Error(`Service ${name} has't initialized yet!`);
 
     return service as SD[K];
   }

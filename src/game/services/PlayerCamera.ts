@@ -2,7 +2,6 @@ import Phaser from "phaser";
 import { services } from "..";
 import { GameScene } from "./GameScene";
 import { ServiceLike } from "./lib/ServiceContainer";
-import { GameEvents } from "./GameEvents";
 
 type MyKeyCursor = {
   [K in keyof Phaser.Types.Input.Keyboard.CursorKeys]: number;

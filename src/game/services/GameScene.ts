@@ -30,16 +30,12 @@ export class GameScene extends Phaser.Scene implements ServiceLike {
   }
 
   preload() {
-    console.log('did preload')
-
     for (const sprite of spritesToLoad) {
       this.load.image(sprite.name, sprite.path);
     }
   }
 
   create() {
-    console.log('created');
-
     services.initialize();
   }
 
