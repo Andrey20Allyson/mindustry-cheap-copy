@@ -7,7 +7,7 @@ export class ChunkCoords extends Position {
   readonly workspace: Workspace = services.get('workspace');
 
   toBlockPosition(x = 0, y = 0): BlockPosition {
-    const chunkSize = this.workspace.chunkRouter.chunkSize;
+    const chunkSize = this.workspace.chunkRouter.CHUNK_SIZE;
 
     return new BlockPosition(
       x + this.x * chunkSize,

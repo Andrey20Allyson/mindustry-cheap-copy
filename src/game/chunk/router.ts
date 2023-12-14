@@ -4,8 +4,14 @@ import { BlockPosition } from "../blocks/Block.position";
 import { ChunkCoords } from "./coords";
 
 export class ChunkRouter {
-  readonly chunks: Map<string, Chunk> = new Map<string, Chunk>;
-  readonly chunkSize: number = 16;
+  private chunks: Map<string, Chunk> = new Map<string, Chunk>;
+  readonly CHUNK_SIZE: number = 16;
+
+  *iter(): Iterable<Chunk> {
+    for (const [_, chunk] of this.chunks) {
+      yield chunk;
+    }
+  }
 
   create(coords: ChunkCoords): Chunk {
     const key = coords.serialize();
@@ -20,8 +26,10 @@ export class ChunkRouter {
     return newChunk;
   }
 
-  chunkAt() {
+  chunkAt(coords: ChunkCoords): Chunk | undefined {
+    const key = coords.serialize();
 
+    return this.chunks.get(key);
   }
 
   blockAt(type: BlockType, position: BlockPosition): Block | undefined {
@@ -47,7 +55,14 @@ export class ChunkRouter {
     return this;
   }
 
-  remove(block: Block) {
-    
+  remove(type: BlockType, position: BlockPosition): boolean {
+    const positionInChunk = position.toPositionInChunk();
+    const coords = positionInChunk.chunkCoords;
+
+    const key = coords.serialize();
+    const chunk = this.chunks.get(key);
+    if (chunk === undefined) return false;
+
+    return chunk.remove(type, positionInChunk);
   }
 }

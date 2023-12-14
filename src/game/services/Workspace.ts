@@ -20,7 +20,7 @@ export class Workspace implements ServiceLike {
     this.chunkRouter.create(new ChunkCoords(0, 1));
     this.chunkRouter.create(new ChunkCoords(1, 0));
 
-    for (const [_, chunk] of this.chunkRouter.chunks) {
+    for (const chunk of this.chunkRouter.iter()) {
       chunk.load();
     }
 

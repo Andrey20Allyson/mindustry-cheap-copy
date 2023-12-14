@@ -29,7 +29,7 @@ export class Chunk {
   }
 
   get size() {
-    return this.workspace.chunkRouter.chunkSize;
+    return this.workspace.chunkRouter.CHUNK_SIZE;
   }
 
   load() {
@@ -60,6 +60,17 @@ export class Chunk {
     const index = position.toIndex();
 
     return collection[index];
+  }
+
+  remove(type: BlockType, position: BlockPositionInChunk): boolean {
+    const collection = this.collectionOf(type);
+    const index = position.toIndex();
+
+    const hasBlock = collection[index] !== undefined;
+
+    delete collection[index];
+
+    return hasBlock;
   }
 
   put(block: Block): this {

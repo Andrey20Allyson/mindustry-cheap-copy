@@ -7,7 +7,7 @@ export class BlockPosition extends Position {
   readonly workspace = services.get('workspace');
 
   private getChunkSize(): number {
-    return this.workspace.chunkRouter.chunkSize;
+    return this.workspace.chunkRouter.CHUNK_SIZE;
 
   }
 
@@ -48,7 +48,7 @@ export class BlockPositionInChunk extends Position {
   }
 
   getChunkSize() {
-    return this.workspace.chunkRouter.chunkSize;
+    return this.workspace.chunkRouter.CHUNK_SIZE;
   }
 
   toBlockPosition() {
